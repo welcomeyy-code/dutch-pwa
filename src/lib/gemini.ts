@@ -18,32 +18,45 @@ function toGemini(s: unknown): unknown {
   return s
 }
 
+const FALLBACK_MODEL = 'gemini-flash-lite-latest'
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms))
+const BUSY = new Set([429, 500, 503, 504])
+
+async function callModel(model: string, key: string, base64Jpeg: string): Promise<Response> {
+  return fetch(`https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(model)}:generateContent`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
+    body: JSON.stringify({
+      contents: [
+        { role: 'user', parts: [{ inline_data: { mime_type: 'image/jpeg', data: base64Jpeg } }, { text: PROMPT }] },
+      ],
+      generationConfig: { responseMimeType: 'application/json', responseSchema: toGemini(SCAN_SCHEMA), temperature: 0.2 },
+    }),
+  })
+}
+
+/** 服务繁忙时：主模型重试 3 次（间隔 2s、4s），仍失败再试备用模型 2 次 */
+async function callWithRetry(key: string, base64Jpeg: string): Promise<Response> {
+  const main = settings.geminiModel
+  const plan = [main, main, main, ...(main === FALLBACK_MODEL ? [] : [FALLBACK_MODEL, FALLBACK_MODEL])]
+  let res!: Response
+  for (let i = 0; i < plan.length; i++) {
+    res = await callModel(plan[i], key, base64Jpeg)
+    if (res.ok || !BUSY.has(res.status)) return res
+    if (i < plan.length - 1) await sleep(Math.min(2000 * (i + 1), 6000))
+  }
+  return res
+}
+
 export async function scanWithGemini(base64Jpeg: string): Promise<ScanResult> {
   const key = settings.geminiKey
   if (!key) throw new Error('请先在「设置」中填写 Gemini API key')
 
-  const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/${encodeURIComponent(settings.geminiModel)}:generateContent`,
-    {
-      method: 'POST',
-      headers: { 'content-type': 'application/json', 'x-goog-api-key': key },
-      body: JSON.stringify({
-        contents: [
-          {
-            role: 'user',
-            parts: [{ inline_data: { mime_type: 'image/jpeg', data: base64Jpeg } }, { text: PROMPT }],
-          },
-        ],
-        generationConfig: {
-          responseMimeType: 'application/json',
-          responseSchema: toGemini(SCAN_SCHEMA),
-          temperature: 0.2,
-        },
-      }),
-    },
-  )
+  const res = await callWithRetry(key, base64Jpeg)
   if (!res.ok) {
     const t = await res.text().catch(() => '')
+    if (BUSY.has(res.status))
+      throw new Error(`Gemini 服务现在太忙（${res.status}），已自动重试仍失败。免费档高峰期常见，过几分钟再试，或在设置里切换到 Claude。`)
     throw new Error(`Gemini API ${res.status}: ${t.slice(0, 300)}`)
   }
   const data = await res.json()

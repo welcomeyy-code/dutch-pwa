@@ -4,6 +4,7 @@ const K = {
   gistToken: 'dutch.gistToken',
   gistId: 'dutch.gistId',
   lastSync: 'dutch.lastSync',
+  voiceURI: 'dutch.voiceURI',
 }
 
 function get(k: string): string {
@@ -24,6 +25,8 @@ export const settings = {
   set gistToken(v: string) { set(K.gistToken, v.trim()) },
   get gistId() { return get(K.gistId) },
   set gistId(v: string) { set(K.gistId, v.trim()) },
+  get voiceURI() { return get(K.voiceURI) },
+  set voiceURI(v: string) { set(K.voiceURI, v) },
   get lastSync() { return Number(get(K.lastSync)) || 0 },
   set lastSync(v: number) { set(K.lastSync, String(v)) },
 }

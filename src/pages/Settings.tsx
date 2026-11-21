@@ -1,8 +1,32 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { currentVoice, dutchVoices, speak } from '../lib/tts'
 import { exportAll, isBackup, replaceAll } from '../db/db'
 import { pullGist, pushGist } from '../lib/gist'
 import { mergeBackups } from '../lib/merge'
 import { DEFAULT_MODEL, settings } from '../lib/settings'
+
+function VoicePicker() {
+  const [list, setList] = useState(dutchVoices())
+  const [uri, setUri] = useState(currentVoice()?.voiceURI ?? '')
+  // iOS 的声音列表是异步加载的
+  useEffect(() => {
+    const t = setInterval(() => setList(dutchVoices()), 500)
+    setTimeout(() => clearInterval(t), 4000)
+    return () => clearInterval(t)
+  }, [])
+
+  if (!list.length)
+    return <p className="muted">没有找到荷兰语声音。iPhone：设置 → 辅助功能 → 朗读内容 → 声音 → 荷兰语，下载 Claire（选「增强版」或「高品质」）。</p>
+  return (
+    <>
+      <select className="input" value={uri} onChange={(e) => { setUri(e.target.value); settings.voiceURI = e.target.value }}>
+        {list.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name}（{v.lang}）</option>)}
+      </select>
+      <button className="btn" onClick={() => speak('Goedemorgen! Ik leer Nederlands.')}>🔊 试听</button>
+      <p className="muted">默认自动选荷兰语女声（如 Claire）。声音越“机械”，通常是因为用了压缩版：到系统设置里下载“增强版”或“高品质”版本，这里就会出现更自然的选项。</p>
+    </>
+  )
+}
 
 export default function Settings() {
   const [key, setKey] = useState(settings.claudeKey)
@@ -41,6 +65,9 @@ export default function Settings() {
   return (
     <div>
       <h1>设置</h1>
+
+      <h2>朗读声音</h2>
+      <VoicePicker />
 
       <h2>Claude API</h2>
       <input className="input" type="password" placeholder="sk-ant-…" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} />

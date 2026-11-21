@@ -17,7 +17,7 @@ export default function Home() {
   return (
     <div>
       <h1>Nederlands 🇳🇱</h1>
-      <p className="muted">目标：通过入籍考试 A2，并能和同事聊生活与工作。</p>
+      <p className="muted">给中文母语者的荷兰语入门工具：词汇、发音、拍照解读（A1–A2）。</p>
       <div className="card hero">
         <div className="big">{stat.due}</div>
         <div>张待复习 · {stat.fresh} 张新词 · 共 {stat.total} 词</div>

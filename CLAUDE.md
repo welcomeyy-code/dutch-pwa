@@ -1,7 +1,7 @@
 # Nederlands 学习 PWA
 
-自用荷兰语学习 PWA，主设备 iPhone（Safari → 添加到主屏幕）。
-**目标**：通过荷兰语入籍考试 A2，并能和同事聊生活与工作。界面与讲解语言：简体中文。
+给中文母语者的荷兰语入门学习 PWA，主设备 iPhone（Safari → 添加到主屏幕）。
+**目标**：帮助中文母语者从零学到 A2：积累常用词汇、掌握发音难点、能读懂身边的荷兰语。界面与讲解语言：简体中文。
 
 ## 技术栈
 React 19 + Vite + TypeScript + `vite-plugin-pwa` + `react-router-dom` 的 **HashRouter**。

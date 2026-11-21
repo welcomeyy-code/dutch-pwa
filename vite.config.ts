@@ -13,7 +13,7 @@ export default defineConfig({
       manifest: {
         name: 'Nederlands 学习',
         short_name: 'NL学习',
-        description: '荷兰语入籍考试 A2 自学工具',
+        description: '给中文母语者的荷兰语入门学习工具（A1–A2）',
         lang: 'zh-CN',
         start_url: './',
         scope: './',

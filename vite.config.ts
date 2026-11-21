@@ -25,7 +25,22 @@ export default defineConfig({
           { src: 'icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'any maskable' },
         ],
       },
-      workbox: { globPatterns: ['**/*.{js,css,html,svg,png}'] },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,svg,png}'],
+        // 音频不预缓存（体积大），播放过的才缓存，之后离线可用；iOS 需要 Range 请求支持
+        runtimeCaching: [
+          {
+            urlPattern: /\/audio\/.*\.mp3$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'audio',
+              expiration: { maxEntries: 3000 },
+              cacheableResponse: { statuses: [200] },
+              rangeRequests: true,
+            },
+          },
+        ],
+      },
     }),
   ],
 })

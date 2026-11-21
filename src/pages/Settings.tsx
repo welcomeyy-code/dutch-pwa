@@ -23,7 +23,7 @@ function VoicePicker() {
         {list.map((v) => <option key={v.voiceURI} value={v.voiceURI}>{v.name}（{v.lang}）</option>)}
       </select>
       <button className="btn" onClick={() => speak('Goedemorgen! Ik leer Nederlands.')}>🔊 试听</button>
-      <p className="muted">默认自动选荷兰语女声（如 Claire）。声音越“机械”，通常是因为用了压缩版：到系统设置里下载“增强版”或“高品质”版本，这里就会出现更自然的选项。</p>
+      <p className="muted">词库里的词和例句优先播放预录的荷兰语神经女声；拍照得到的新词、没有预录的内容才用这里选的系统声音。默认自动选荷兰语女声（如 Claire）。声音越“机械”，通常是因为用了压缩版：到系统设置里下载“增强版”或“高品质”版本，这里就会出现更自然的选项。</p>
     </>
   )
 }

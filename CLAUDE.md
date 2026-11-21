@@ -78,3 +78,9 @@ IndexedDB 键：`words` `reviews` `scans` `tombstones` `seeded-v1`，每个键�
 3. **场景句型**：问路、看病、超市、银行、市政厅、工作闲聊/会议用语。
 4. **考试模拟**：入籍考试的听、说、读、写、KNM（荷兰社会常识）。
 5. 其他：更多发音单元（sch、aa/ee/oo/uu、eu 与 oe 对比等）、录音自评、真人音频源、统计与连续天数。
+
+## 预生成音频（神经女声）
+- `scripts/gen-audio.ts`（`npm run audio`）用 Azure Speech 的 `nl-NL-ColetteNeural` 为词库词条、种子例句、发音对比词生成 mp3，写入 `public/audio/`，并生成 `index.json`（文本 → 文件名）。约 1658 条、1.35 万字符，在 Azure 免费档（F0，每月 50 万字符）内；免费档限速，脚本约 18 次/分钟，可中断重跑。
+- 应用里 `lib/tts.ts` 的 `speak()` 先查清单：有预录音频就播放，否则退回系统朗读。文本必须与 `displayWord()` 完全一致才能命中。
+- 音频不预缓存，播放过的由 Service Worker 运行时缓存（含 Range 请求，iOS 需要）。
+- key 通过环境变量传入，不要写进代码或提交。

@@ -45,9 +45,37 @@ export function currentVoice(): SpeechSynthesisVoice | undefined {
   return list.find((v) => v.voiceURI === chosen) ?? list[0]
 }
 
-/** 必须由用户点击触发（iOS 限制） */
+// 预生成的真人级神经语音（public/audio，由 scripts/gen-audio.ts 生成）。有就优先用，没有再退回系统朗读。
+let manifest: Record<string, string> = {}
+const audioBase = `${import.meta.env.BASE_URL}audio/`
+fetch(`${audioBase}index.json`)
+  .then((r) => (r.ok ? r.json() : {}))
+  .then((m) => { if (m && typeof m === 'object') manifest = m as Record<string, string> })
+  .catch(() => { /* 离线且未缓存：忽略，退回系统朗读 */ })
+
+let player: HTMLAudioElement | null = null
+
+export function hasRecordedAudio(text: string): boolean {
+  return !!manifest[text]
+}
+
+/** 必须由用户点击触发（iOS 限制）。点击回调里同步调用，不要先 await。 */
 export function speak(text: string, rate = 0.85) {
+  const file = manifest[text]
+  if (file) {
+    try { window.speechSynthesis?.cancel() } catch { /* 忽略 */ }
+    player?.pause()
+    const a = new Audio(audioBase + file)
+    player = a
+    a.play().catch(() => speakSystem(text, rate)) // 播放失败时退回系统朗读
+    return
+  }
+  speakSystem(text, rate)
+}
+
+function speakSystem(text: string, rate: number) {
   if (!('speechSynthesis' in window)) return
+  player?.pause()
   const synth = window.speechSynthesis
   synth.cancel()
   const u = new SpeechSynthesisUtterance(text)

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { addScan, addWords, getScans, getWords } from '../db/db'
-import { scanImage } from '../lib/claude'
+import { hasScanKey, scanImage } from '../lib/scan'
 import { fileToBase64Jpeg } from '../lib/image'
-import { settings } from '../lib/settings'
 import type { PhotoScan, ScanWord, Word } from '../types'
 import SpeakButton from '../components/SpeakButton'
 import { displayWord, wordId } from '../components/wordUtil'
@@ -52,7 +51,7 @@ export default function Scan() {
   return (
     <div>
       <h1>拍照解读</h1>
-      {!settings.claudeKey && <div className="card warn">还没有 API key，请先到<Link to="/settings">设置</Link>填写。</div>}
+      {!hasScanKey() && <div className="card warn">还没有 API key，请先到<Link to="/settings">设置</Link>填写（Gemini 有免费额度）。</div>}
       <div className="row">
         <label className="btn primary grow">
           📷 拍照
@@ -63,7 +62,7 @@ export default function Scan() {
           <input type="file" accept="image/*" hidden disabled={busy} onChange={(e) => { onFile(e.target.files?.[0]); e.target.value = '' }} />
         </label>
       </div>
-      {busy && <p className="muted">Claude 正在解读，请稍等…</p>}
+      {busy && <p className="muted">AI 正在解读，请稍等…</p>}
       {error && <div className="card warn">{error}</div>}
 
       {scan && (

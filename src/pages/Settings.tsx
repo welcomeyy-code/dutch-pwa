@@ -3,7 +3,7 @@ import { currentVoice, dutchVoices, speak } from '../lib/tts'
 import { exportAll, isBackup, replaceAll } from '../db/db'
 import { pullGist, pushGist } from '../lib/gist'
 import { mergeBackups } from '../lib/merge'
-import { DEFAULT_MODEL, settings } from '../lib/settings'
+import { DEFAULT_GEMINI_MODEL, DEFAULT_MODEL, settings } from '../lib/settings'
 
 function VoicePicker() {
   const [list, setList] = useState(dutchVoices())
@@ -31,6 +31,9 @@ function VoicePicker() {
 export default function Settings() {
   const [key, setKey] = useState(settings.claudeKey)
   const [model, setModel] = useState(settings.model)
+  const [provider, setProvider] = useState(settings.provider)
+  const [geminiKey, setGeminiKey] = useState(settings.geminiKey)
+  const [geminiModel, setGeminiModel] = useState(settings.geminiModel)
   const [token, setToken] = useState(settings.gistToken)
   const [gistId, setGistId] = useState(settings.gistId)
   const [msg, setMsg] = useState('')
@@ -43,6 +46,7 @@ export default function Settings() {
   }
   const saveAll = () => {
     settings.claudeKey = key; settings.model = model || DEFAULT_MODEL
+    settings.provider = provider; settings.geminiKey = geminiKey; settings.geminiModel = geminiModel || DEFAULT_GEMINI_MODEL
     settings.gistToken = token; settings.gistId = gistId
     setMsg('✅ 已保存')
   }
@@ -69,10 +73,24 @@ export default function Settings() {
       <h2>朗读声音</h2>
       <VoicePicker />
 
-      <h2>Claude API</h2>
-      <input className="input" type="password" placeholder="sk-ant-…" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} />
-      <input className="input" placeholder={`模型（默认 ${DEFAULT_MODEL}）`} value={model} onChange={(e) => setModel(e.target.value)} />
-      <p className="muted">key 只保存在本机浏览器（localStorage），请求直接发给 Anthropic。只在自己的设备上使用，不要把它写进代码或仓库。</p>
+      <h2>拍照解读的 AI 服务</h2>
+      <select className="input" value={provider} onChange={(e) => setProvider(e.target.value as 'claude' | 'gemini')}>
+        <option value="gemini">Google Gemini（有免费额度）</option>
+        <option value="claude">Anthropic Claude（付费）</option>
+      </select>
+      {provider === 'gemini' ? (
+        <>
+          <input className="input" type="password" placeholder="Gemini API key（在 aistudio.google.com 获取）" autoComplete="off" value={geminiKey} onChange={(e) => setGeminiKey(e.target.value)} />
+          <input className="input" placeholder={`模型（默认 ${DEFAULT_GEMINI_MODEL}）`} value={geminiModel} onChange={(e) => setGeminiModel(e.target.value)} />
+          <p className="muted">免费档下，你发送的图片可能被 Google 用来改进产品，请不要拍含个人信息的文件（信件、证件、账单等）。</p>
+        </>
+      ) : (
+        <>
+          <input className="input" type="password" placeholder="sk-ant-…" autoComplete="off" value={key} onChange={(e) => setKey(e.target.value)} />
+          <input className="input" placeholder={`模型（默认 ${DEFAULT_MODEL}）`} value={model} onChange={(e) => setModel(e.target.value)} />
+        </>
+      )}
+      <p className="muted">key 只保存在本机浏览器（localStorage），请求直接发给服务商。只在自己的设备上使用，不要把它写进代码或仓库。</p>
 
       <h2>GitHub Gist 同步（可选）</h2>
       <input className="input" type="password" placeholder="GitHub token（经典 token，勾选 gist 权限）" autoComplete="off" value={token} onChange={(e) => setToken(e.target.value)} />

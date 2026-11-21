@@ -49,6 +49,8 @@ IndexedDB 键：`words` `reviews` `scans` `tombstones` `seeded-v1`，每个键�
 ## 安全约定
 - Claude API key 和 GitHub token 只存 localStorage，请求从浏览器直发。调用 Anthropic 需要头 `anthropic-dangerous-direct-browser-access: true`。仅自用，**不得提交任何 key 到仓库**。
 - 默认模型 `claude-sonnet-5-5`，可在设置页修改。
+- 拍照解读支持两个服务商（设置页切换，默认 Gemini）：`lib/claude.ts`（Claude，tool use）和 `lib/gemini.ts`（Gemini，`responseSchema`，默认模型别名 `gemini-flash-latest`），由 `lib/scan.ts` 分发；两者共用同一个 JSON schema 和提示词。Gemini 免费档的内容可能被 Google 用于改进产品，设置页有提示。
+- 朗读声音：`lib/tts.ts` 自动优先选荷兰语女声，设置页可手选。iOS 的网页朗读接口常常看不到系统里下载的增强版/高品质声音（如 Claire），属于系统限制；备选方案是预生成音频文件。
 
 ## iOS PWA 注意事项
 - `index.html` 需要 `apple-touch-icon`、`apple-mobile-web-app-capable`、`viewport-fit=cover`；样式用 `env(safe-area-inset-*)` 处理刘海和底部横条（`.main` 与 `.tabbar` 已处理）。

@@ -39,13 +39,17 @@ const TOOL = {
   },
 }
 
-const PROMPT = `这是一张包含荷兰语文字的图片（可能是标牌、信件、菜单、课本等）。请读取其中的荷兰语，并调用 report_scan 返回：
+export const SCAN_SCHEMA = TOOL.input_schema
+
+export const PROMPT = `这是一张包含荷兰语文字的图片（可能是标牌、信件、菜单、课本等）。请读取其中的荷兰语，并调用 report_scan 返回：
 1. text：识别出的原文；
 2. words：逐词释义（词典原形、de/het、词性、简体中文、IPA、CEFR 级别），面向 A1–A2 阶段的中文学习者；
 3. grammarZh：用简体中文讲解句子的语法要点。
 图片里没有荷兰语时，text 返回空字符串，words 返回空数组。`
 
-export async function scanImage(base64Jpeg: string): Promise<Omit<PhotoScan, 'id' | 'createdAt' | 'updatedAt'>> {
+export type ScanResult = Omit<PhotoScan, 'id' | 'createdAt' | 'updatedAt'>
+
+export async function scanWithClaude(base64Jpeg: string): Promise<ScanResult> {
   const key = settings.claudeKey
   if (!key) throw new Error('请先在「设置」中填写 Claude API key')
 

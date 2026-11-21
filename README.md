@@ -1,32 +1,28 @@
-# React + TypeScript + Vite
+# Nederlands 学习
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+自用的荷兰语学习 PWA，主要在 iPhone 上用（Safari → 添加到主屏幕）。目标：通过荷兰语入籍考试 A2，并能和同事聊生活与工作。
 
-Currently, two official plugins are available:
+## 功能
+- **词汇**：SRS 间隔复习，点喇叭用系统荷兰语语音朗读。
+- **词库**：A1+A2 核心词 1608 个，可按级别、词性、主题筛选后加入卡组。
+- **拍照解读**：拍照或选图 → Claude（视觉）→ 原文、逐词释义、中文语法讲解 → 一键加入卡组。
+- **发音**：ui、eu、ij/ei、g/ch、r 五个难点音，含舌位说明和对比词。
+- **备份**：本地 JSON 导出/导入，可选 GitHub Gist 手动同步。
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 技术栈
+React + Vite + TypeScript + vite-plugin-pwa + HashRouter，数据存 IndexedDB，通过 GitHub Actions 部署到 GitHub Pages。
 
-## React Compiler
-
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## 本地运行
+```bash
+npm install
+npm run dev
 ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+## 使用拍照解读
+在设置页填入自己的 Claude API key。key 只保存在本机浏览器里，不会进入仓库。
+
+## 许可
+- 代码：MIT。
+- 词库 `src/data/core.json`：CC BY-NC-SA 4.0，基于 [NT2Lex](https://github.com/anaistack/NT2Lex)（Tack et al. 2018），仅限个人、非商业使用，需署名。
+
+详见 [LICENSE](LICENSE)。开发约定见 [CLAUDE.md](CLAUDE.md)。

@@ -3,7 +3,7 @@ import { currentVoice, dutchVoices, speak } from '../lib/tts'
 import { exportAll, isBackup, replaceAll } from '../db/db'
 import { pullGist, pushGist } from '../lib/gist'
 import { mergeBackups } from '../lib/merge'
-import { DEFAULT_GEMINI_MODEL, DEFAULT_MODEL, settings } from '../lib/settings'
+import { DEFAULT_DEEPSEEK_MODEL, DEFAULT_GEMINI_MODEL, DEFAULT_MODEL, settings, type Provider } from '../lib/settings'
 
 function VoicePicker() {
   const [list, setList] = useState(dutchVoices())
@@ -35,6 +35,8 @@ export default function Settings() {
   const [geminiKey, setGeminiKey] = useState(settings.geminiKey)
   const [geminiModel, setGeminiModel] = useState(settings.geminiModel)
   const [token, setToken] = useState(settings.gistToken)
+  const [deepseekKey, setDeepseekKey] = useState(settings.deepseekKey)
+  const [deepseekModel, setDeepseekModel] = useState(settings.deepseekModel)
   const [gistId, setGistId] = useState(settings.gistId)
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
@@ -47,6 +49,7 @@ export default function Settings() {
   const saveAll = () => {
     settings.claudeKey = key; settings.model = model || DEFAULT_MODEL
     settings.provider = provider; settings.geminiKey = geminiKey; settings.geminiModel = geminiModel || DEFAULT_GEMINI_MODEL
+    settings.deepseekKey = deepseekKey; settings.deepseekModel = deepseekModel || DEFAULT_DEEPSEEK_MODEL
     settings.gistToken = token; settings.gistId = gistId
     setMsg('✅ 已保存')
   }
@@ -74,8 +77,9 @@ export default function Settings() {
       <VoicePicker />
 
       <h2>拍照解读的 AI 服务</h2>
-      <select className="input" value={provider} onChange={(e) => setProvider(e.target.value as 'claude' | 'gemini')}>
+      <select className="input" value={provider} onChange={(e) => setProvider(e.target.value as Provider)}>
         <option value="gemini">Google Gemini（有免费额度）</option>
+        <option value="deepseek">DeepSeek（便宜；图片识别为新功能）</option>
         <option value="claude">Anthropic Claude（付费）</option>
       </select>
       {provider === 'gemini' ? (
@@ -83,6 +87,12 @@ export default function Settings() {
           <input className="input" type="password" placeholder="Gemini API key（在 aistudio.google.com 获取）" autoComplete="off" value={geminiKey} onChange={(e) => setGeminiKey(e.target.value)} />
           <input className="input" placeholder={`模型（默认 ${DEFAULT_GEMINI_MODEL}）`} value={geminiModel} onChange={(e) => setGeminiModel(e.target.value)} />
           <p className="muted">免费档下，你发送的图片可能被 Google 用来改进产品，请不要拍含个人信息的文件（信件、证件、账单等）。</p>
+        </>
+      ) : provider === 'deepseek' ? (
+        <>
+          <input className="input" type="password" placeholder="DeepSeek API key（在 platform.deepseek.com 获取）" autoComplete="off" value={deepseekKey} onChange={(e) => setDeepseekKey(e.target.value)} />
+          <input className="input" placeholder={`模型（默认 ${DEFAULT_DEEPSEEK_MODEL}）`} value={deepseekModel} onChange={(e) => setDeepseekModel(e.target.value)} />
+          <p className="muted">DeepSeek 的图片识别是较新的功能，模型名可能变化。如果报“不支持图片”或“模型不存在”，请到官方文档查最新的视觉模型名填在这里。要先在平台充值才能调用。请求会发送到 DeepSeek 的服务器（中国境外访问也可用），请不要拍含个人信息的文件。</p>
         </>
       ) : (
         <>

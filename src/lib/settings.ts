@@ -8,6 +8,8 @@ const K = {
   provider: 'dutch.provider',
   geminiKey: 'dutch.geminiKey',
   geminiModel: 'dutch.geminiModel',
+  deepseekKey: 'dutch.deepseekKey',
+  deepseekModel: 'dutch.deepseekModel',
 }
 
 function get(k: string): string {
@@ -19,6 +21,8 @@ function set(k: string, v: string) {
 
 export const DEFAULT_MODEL = 'claude-sonnet-5-5'
 export const DEFAULT_GEMINI_MODEL = 'gemini-flash-latest'
+export const DEFAULT_DEEPSEEK_MODEL = 'deepseek-flash'
+export type Provider = 'claude' | 'gemini' | 'deepseek'
 
 export const settings = {
   get claudeKey() { return get(K.claudeKey) },
@@ -29,8 +33,15 @@ export const settings = {
   set gistToken(v: string) { set(K.gistToken, v.trim()) },
   get gistId() { return get(K.gistId) },
   set gistId(v: string) { set(K.gistId, v.trim()) },
-  get provider(): 'claude' | 'gemini' { return get(K.provider) === 'claude' ? 'claude' : 'gemini' },
-  set provider(v: 'claude' | 'gemini') { set(K.provider, v) },
+  get provider(): Provider {
+    const p = get(K.provider)
+    return p === 'claude' || p === 'deepseek' ? p : 'gemini'
+  },
+  set provider(v: Provider) { set(K.provider, v) },
+  get deepseekKey() { return get(K.deepseekKey) },
+  set deepseekKey(v: string) { set(K.deepseekKey, v.trim()) },
+  get deepseekModel() { return get(K.deepseekModel) || DEFAULT_DEEPSEEK_MODEL },
+  set deepseekModel(v: string) { set(K.deepseekModel, v.trim()) },
   get geminiKey() { return get(K.geminiKey) },
   set geminiKey(v: string) { set(K.geminiKey, v.trim()) },
   get geminiModel() { return get(K.geminiModel) || DEFAULT_GEMINI_MODEL },

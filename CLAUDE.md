@@ -49,7 +49,7 @@ IndexedDB 键：`words` `reviews` `scans` `tombstones` `seeded-v1`，每个键�
 ## 安全约定
 - Claude API key 和 GitHub token 只存 localStorage，请求从浏览器直发。调用 Anthropic 需要头 `anthropic-dangerous-direct-browser-access: true`。仅自用，**不得提交任何 key 到仓库**。
 - 默认模型 `claude-sonnet-5-5`，可在设置页修改。
-- 拍照解读支持两个服务商（设置页切换，默认 Gemini）：`lib/claude.ts`（Claude，tool use）和 `lib/gemini.ts`（Gemini，`responseSchema`，默认模型别名 `gemini-flash-latest`），由 `lib/scan.ts` 分发；两者共用同一个 JSON schema 和提示词。Gemini 免费档的内容可能被 Google 用于改进产品，设置页有提示。
+- 拍照解读支持两个服务商（设置页切换，默认 Gemini）：`lib/claude.ts`（Claude，tool use）和 `lib/gemini.ts`（Gemini，`responseSchema`，默认模型别名 `gemini-flash-latest`），由 `lib/scan.ts` 分发；两者共用同一个 JSON schema 和提示词。第三个服务商 DeepSeek 在 `lib/deepseek.ts`：OpenAI 兼容的 chat completions + `response_format: json_object`，图片走 `image_url`（视觉功能较新，默认模型 `deepseek-flash`，失败时自动试 `deepseek-v4-flash-vision-exp`，模型名可在设置里改）；输出经 `normalize()` 容错。浏览器直连已验证 CORS 允许（对 github.io 来源回 allow-origin）。写作批改/口语反馈这类纯文本任务以后可直接复用 DeepSeek 的文本模型。Gemini 免费档的内容可能被 Google 用于改进产品，设置页有提示。
 - 朗读声音：`lib/tts.ts` 自动优先选荷兰语女声，设置页可手选。iOS 的网页朗读接口常常看不到系统里下载的增强版/高品质声音（如 Claire），属于系统限制；备选方案是预生成音频文件。
 
 ## iOS PWA 注意事项
@@ -85,12 +85,12 @@ IndexedDB 键：`words` `reviews` `scans` `tombstones` `seeded-v1`，每个键�
 - 音频不预缓存，播放过的由 Service Worker 运行时缓存（含 Range 请求，iOS 需要）。
 - key 通过环境变量传入，不要写进代码或提交。
 
-## ��ϰ��ϵ��A2 ��˵��д��
-- ·�ߣ��﷨�� �� ����/��д �� д������ + ����¼�� �� �Ķ� �� ģ�⿼�ԡ�**KNM ����**���û���ȷ����Ҫ����
-- �﷨�Σ�`src/data/grammar.ts`��18 �Ρ�103 �⣩������ choice / fill / order��choice/fill �� prompt �� `___` ��ʾ�ո�order �� prompt ��������˼��answer ���������ӣ����� `alts` ���ܶ������򣩡�`exerciseSentence()` ����������������ӣ����ڴ���ʶ���Ԥ������Ƶ��
-- ��ϰ���� `components/ExerciseRunner.tsx`���������� `schedule()` д�� `reviews`����Ϊ `ex:<lessonId>:<���>`�����=�ǵã����=���������ʻ㸴ϰҳֻ���� `words`��������Щ��Ӱ�죻Gist �ϲ�����ͨ�ã����Խ��Ȼ��汸��ͬ����
-- ҳ�棺`/practice`����ϰ���ģ���`/grammar`��`/grammar/:id`��`/grammar/review`�����ڴ��⣩���ײ� 5 ����ǩ����ҳ / ��ϰ / ��ϰ / ���� / ���á�
-- �����������ı���Ҫ���� `scripts/gen-audio.ts` ����Ƶ��`gen-audio` ������﷨�������ϰ�䣩��
+## ��ϰ��ϵ��A2 ��˵��д��
+- ·�ߣ��﷨�� �� ����/��д �� д������ + ����¼�� �� �Ķ� �� ģ�⿼�ԡ�**KNM ����**���û���ȷ����Ҫ����
+- �﷨�Σ�`src/data/grammar.ts`��18 �Ρ�103 �⣩������ choice / fill / order��choice/fill �� prompt �� `___` ��ʾ�ո�order �� prompt ��������˼��answer ���������ӣ����� `alts` ���ܶ������򣩡�`exerciseSentence()` ����������������ӣ����ڴ���ʶ���Ԥ������Ƶ��
+- ��ϰ���� `components/ExerciseRunner.tsx`���������� `schedule()` д�� `reviews`����Ϊ `ex:<lessonId>:<���>`�����=�ǵã����=���������ʻ㸴ϰҳֻ���� `words`��������Щ��Ӱ�죻Gist �ϲ�����ͨ�ã����Խ��Ȼ��汸��ͬ����
+- ҳ�棺`/practice`����ϰ���ģ���`/grammar`��`/grammar/:id`��`/grammar/review`�����ڴ��⣩���ײ� 5 ����ǩ����ҳ / ��ϰ / ��ϰ / ���� / ���á�
+- �����������ı���Ҫ���� `scripts/gen-audio.ts` ����Ƶ��`gen-audio` ������﷨�������ϰ�䣩��
 
 ## 听力与听写
 - `data/listening.ts`：12 段 A2 场景（问路、超市、预约医生、车站广播、咖啡馆、同事闲聊、图书馆留言、邻居、天气、学校通知、药店、会议改期），31 道三选一题。每句标 `who: 'f' | 'm'`（女声 Colette / 男声 Maarten）。答完题才显示原文和中文；成绩写入 `reviews`，键 `ls:<id>`。

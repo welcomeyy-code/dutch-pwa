@@ -91,3 +91,9 @@ IndexedDB 键：`words` `reviews` `scans` `tombstones` `seeded-v1`，每个键�
 - ��ϰ���� `components/ExerciseRunner.tsx`���������� `schedule()` д�� `reviews`����Ϊ `ex:<lessonId>:<���>`�����=�ǵã����=���������ʻ㸴ϰҳֻ���� `words`��������Щ��Ӱ�죻Gist �ϲ�����ͨ�ã����Խ��Ȼ��汸��ͬ����
 - ҳ�棺`/practice`����ϰ���ģ���`/grammar`��`/grammar/:id`��`/grammar/review`�����ڴ��⣩���ײ� 5 ����ǩ����ҳ / ��ϰ / ��ϰ / ���� / ���á�
 - �����������ı���Ҫ���� `scripts/gen-audio.ts` ����Ƶ��`gen-audio` ������﷨�������ϰ�䣩��
+
+## 听力与听写
+- `data/listening.ts`：12 段 A2 场景（问路、超市、预约医生、车站广播、咖啡馆、同事闲聊、图书馆留言、邻居、天气、学校通知、药店、会议改期），31 道三选一题。每句标 `who: 'f' | 'm'`（女声 Colette / 男声 Maarten）。答完题才显示原文和中文；成绩写入 `reviews`，键 `ls:<id>`。
+- `data/dictation.ts`：听写题库 = 听力对话句 + 语法例句（3–14 个词的完整句子）。键 `dc:<哈希>`。判分按词对齐（LCS），≥90% 记得，≥60% 困难，否则重来。
+- 播放：`lib/tts.ts` 的 `speak(text, rate, who)` 与 `speakLines(lines)`。预生成音频清单键：女声 = 文本，男声 = `m|文本`。iOS 必须复用同一个 `<audio>` 元素，连续播放才不会被拦截。没有预录音频时退回系统朗读（男声尽量选系统里的男声）。
+- 新增荷兰语内容后，运行 `node scripts/gen-audio.ts`（需 Azure key，见脚本头注释）补音频；脚本可断点续跑。

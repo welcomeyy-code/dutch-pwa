@@ -74,6 +74,14 @@ export interface PhonemeUnit {
   minimalPairs: { nl: string; ipa: string; zh: string; contrast?: boolean }[]
 }
 
+export interface ListeningPiece {
+  id: string
+  kind: 'dialogue' | 'announcement'
+  title: string // 中文场景名
+  lines: { who: 'f' | 'm'; nl: string; zh: string }[]
+  questions: { q: string; qZh: string; options: string[]; answer: number }[]
+}
+
 export type ScanWord = Pick<Word, 'nl' | 'article' | 'pos' | 'zh' | 'ipa' | 'level'> & {
   formInText?: string
   example?: Example

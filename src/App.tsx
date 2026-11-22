@@ -12,12 +12,15 @@ import Practice from './pages/Practice'
 import GrammarList from './pages/GrammarList'
 import GrammarLesson from './pages/GrammarLesson'
 import GrammarReview from './pages/GrammarReview'
+import Listening from './pages/Listening'
+import ListeningPiece from './pages/ListeningPiece'
+import Dictation from './pages/Dictation'
 
 // 每个标签对应的路径前缀；“练习”下挂语法、发音、拍照等
 const TABS: { to: string; label: string; icon: string; match: string[] }[] = [
   { to: '/', label: '首页', icon: '🏠', match: [] },
   { to: '/review', label: '复习', icon: '🔁', match: ['/review'] },
-  { to: '/practice', label: '练习', icon: '✏️', match: ['/practice', '/grammar', '/pronounce', '/scan'] },
+  { to: '/practice', label: '练习', icon: '✏️', match: ['/practice', '/grammar', '/pronounce', '/scan', '/listening', '/dictation'] },
   { to: '/deck', label: '卡组', icon: '📚', match: ['/deck', '/library'] },
   { to: '/settings', label: '设置', icon: '⚙️', match: ['/settings'] },
 ]
@@ -42,6 +45,9 @@ export default function App() {
             <Route path="/grammar" element={<GrammarList />} />
             <Route path="/grammar/review" element={<GrammarReview />} />
             <Route path="/grammar/:id" element={<GrammarLesson />} />
+            <Route path="/listening" element={<Listening />} />
+            <Route path="/listening/:id" element={<ListeningPiece />} />
+            <Route path="/dictation" element={<Dictation />} />
             <Route path="/scan" element={<Scan />} />
             <Route path="/pronounce" element={<Pronunciation />} />
             <Route path="/settings" element={<Settings />} />

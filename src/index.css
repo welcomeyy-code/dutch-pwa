@@ -123,3 +123,9 @@ a { color: var(--accent); }
 .fb.ok { background: rgba(46,157,87,.15); } .fb.bad { background: rgba(211,58,44,.12); }
 .big-score { font-size: 44px; font-weight: 700; color: var(--accent); margin: 4px 0; }
 .left { text-align: left; }
+
+/* 听力与听写 */
+.card.playing { border-color: var(--accent); box-shadow: 0 0 0 2px var(--accent) inset; }
+.center-row { justify-content: center; margin: 8px 0; }
+.dw.ok { color: #2e9d57; } .dw.bad { color: var(--danger); text-decoration: underline wavy; }
+textarea.input { padding: 10px 12px; line-height: 1.5; font-family: inherit; resize: vertical; }

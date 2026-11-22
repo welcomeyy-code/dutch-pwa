@@ -35,18 +35,20 @@ export interface ReviewRecord {
   updatedAt: number
 }
 
+/** 练习题。choice/fill 的 prompt 用 ___ 表示空格；order 的 prompt 是中文意思，answer 是完整荷兰语句子。 */
+export type Exercise =
+  | { type: 'choice'; prompt: string; options: string[]; answer: string; hint?: string; explainZh?: string }
+  | { type: 'fill'; prompt: string; answer: string; accept?: string[]; hint?: string; explainZh?: string }
+  | { type: 'order'; prompt: string; answer: string; alts?: string[]; explainZh?: string }
+
 export interface GrammarLesson {
   id: string
   title: string
   level: CEFR
+  /** 讲解正文，段落以换行分隔，“• ”开头为要点 */
   explanationZh: string
   examples: Example[]
-  exercises: {
-    type: 'choice' | 'fill' | 'order'
-    prompt: string
-    answer: string
-    options?: string[]
-  }[]
+  exercises: Exercise[]
 }
 
 export type PhonemeCategory = 'short' | 'long' | 'diphthong' | 'consonant' | 'rule'

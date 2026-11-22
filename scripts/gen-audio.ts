@@ -7,6 +7,7 @@ import { join } from 'node:path'
 import core from '../src/data/core.json' with { type: 'json' }
 import { SEED_WORDS } from '../src/data/a1-words.ts'
 import { PHONEMES } from '../src/data/phonemes.ts'
+import { LESSONS, exerciseSentence } from '../src/data/grammar.ts'
 
 const KEY = process.env.AZURE_SPEECH_KEY
 const REGION = process.env.AZURE_SPEECH_REGION
@@ -28,6 +29,10 @@ for (const w of core.words) texts.add(display(w))
 for (const w of SEED_WORDS) {
   texts.add(display(w))
   for (const e of w.examples) texts.add(e.nl)
+}
+for (const l of LESSONS) {
+  for (const e of l.examples) texts.add(e.nl)
+  for (const x of l.exercises) { const s = exerciseSentence(x); if (s) texts.add(s) }
 }
 for (const p of PHONEMES) {
   for (const m of p.minimalPairs) texts.add(m.nl)

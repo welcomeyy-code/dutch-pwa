@@ -24,8 +24,10 @@ export default function Home() {
         <Link className="btn primary" to="/review">开始复习</Link>
       </div>
       <div className="grid2">
-        <Link className="card link" to="/scan"><b>📷 拍照解读</b><span className="muted">看不懂的荷兰语，拍下来问 Claude</span></Link>
-        <Link className="card link" to="/pronounce"><b>🗣️ 发音</b><span className="muted">ui · eu · ij · g · r</span></Link>
+        <Link className="card link" to="/grammar"><b>📘 语法课</b><span className="muted">18 课 A1–A2 语法 + 练习</span></Link>
+        <Link className="card link" to="/pronounce"><b>🗣️ 发音</b><span className="muted">全部元音、辅音、规则</span></Link>
+        <Link className="card link" to="/scan"><b>📷 拍照解读</b><span className="muted">看不懂的荷兰语，拍下来问 AI</span></Link>
+        <Link className="card link" to="/practice"><b>✏️ 全部练习</b><span className="muted">听说读写，持续增加中</span></Link>
       </div>
     </div>
   )

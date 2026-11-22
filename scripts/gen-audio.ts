@@ -29,7 +29,10 @@ for (const w of SEED_WORDS) {
   texts.add(display(w))
   for (const e of w.examples) texts.add(e.nl)
 }
-for (const p of PHONEMES) for (const m of p.minimalPairs) texts.add(m.nl)
+for (const p of PHONEMES) {
+  for (const m of p.minimalPairs) texts.add(m.nl)
+  for (const m of p.examples) texts.add(m.nl)
+}
 texts.add('Goedemorgen! Ik leer Nederlands.')
 
 const list = [...texts].sort()

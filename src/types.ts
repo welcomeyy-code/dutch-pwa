@@ -49,13 +49,26 @@ export interface GrammarLesson {
   }[]
 }
 
+export type PhonemeCategory = 'short' | 'long' | 'diphthong' | 'consonant' | 'rule'
+
 export interface PhonemeUnit {
   id: string
+  category: PhonemeCategory
   grapheme: string
   ipa: string
   summaryZh: string
   articulationZh: string
+  /** 中文母语者常见错误 */
+  cnMistakesZh?: string[]
   tipsZh: string[]
+  /** 唇形：shape 圆唇/展唇/中性，open 0 闭 1 半开 2 大开 */
+  lips?: { shape: 'round' | 'spread' | 'neutral'; open: 0 | 1 | 2 }
+  /** 元音图上高亮的 IPA 符号；双元音再给 arrow=[起点, 终点] */
+  vowel?: string[]
+  arrow?: [string, string]
+  /** 辅音表上高亮的 IPA 符号 */
+  cons?: string[]
+  examples: { nl: string; ipa: string; zh: string }[]
   minimalPairs: { nl: string; ipa: string; zh: string; contrast?: boolean }[]
 }
 
